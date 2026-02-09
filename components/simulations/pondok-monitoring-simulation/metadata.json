@@ -1,0 +1,7 @@
+{
+  "name": "Pondok Monitoring Simulation",
+  "description": "A simulation of a boarding school monitoring system using CSV data and simulated login.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

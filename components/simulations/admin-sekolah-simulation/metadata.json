@@ -1,0 +1,5 @@
+{
+  "name": "Admin Sekolah Simulation",
+  "description": "A simulation dashboard for school administration managing attendance and grades without a backend database.",
+  "requestFramePermissions": []
+}
