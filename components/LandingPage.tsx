@@ -1,12 +1,12 @@
 import React from 'react';
 import { ViewState } from '../types';
-import { 
-  LayoutDashboard, 
-  School, 
-  BookOpen, 
-  CheckCircle, 
-  Settings, 
-  ShieldCheck, 
+import {
+  LayoutDashboard,
+  School,
+  BookOpen,
+  CheckCircle,
+  Settings,
+  ShieldCheck,
   ChevronRight,
   MonitorPlay,
   MessageCircle
@@ -27,21 +27,15 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
               <div className="bg-blue-600 p-2 rounded-lg">
                 <School className="w-6 h-6 text-white" />
               </div>
-              <span className="font-bold text-xl text-slate-800 tracking-tight">Sistem Informasi Pendidikan & Pesantren</span>
+              <span className="font-bold text-xl text-slate-800 tracking-tight">Sistem Informasi Ponpes</span>
             </div>
             <div className="flex items-center gap-4">
-              <button 
+              <button
                 onClick={() => document.getElementById('portfolio')?.scrollIntoView({ behavior: 'smooth' })}
                 className="text-sm font-medium text-slate-600 hover:text-blue-600 hidden sm:block"
               >
                 Lihat Demo
               </button>
-              <a 
-                href="https://wa.me/6281318446604"
-                className="bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-800 transition-colors"
-              >
-                Hubungi Miqdad
-              </a>
             </div>
           </div>
         </div>
@@ -55,17 +49,17 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
               Digitalisasi Manajemen <span className="text-blue-600">Sekolah & Pesantren</span>
             </h1>
             <p className="text-lg sm:text-xl text-slate-600 mb-10 leading-relaxed">
-              Solusi terintegrasi untuk pendataan siswa, monitoring kedisiplinan pondok, dan setoran hafalan tahfidz. 
+              Solusi terintegrasi untuk pendataan siswa, monitoring kedisiplinan pondok, dan setoran hafalan tahfidz.
               Dapat disesuaikan sepenuhnya dengan <strong>budaya & kurikulum lokal</strong> lembaga Anda.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <button 
+              <button
                 onClick={() => document.getElementById('portfolio')?.scrollIntoView({ behavior: 'smooth' })}
                 className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 md:text-lg transition-all shadow-lg hover:shadow-xl"
               >
                 Lihat Simulasi Live <ChevronRight className="ml-2 w-5 h-5" />
               </button>
-              <a 
+              <a
                 href="https://wa.me/6281318446604"
                 className="inline-flex items-center justify-center px-8 py-3 border border-slate-200 text-base font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 md:text-lg transition-all"
               >
@@ -122,18 +116,18 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
+
             {/* Card 1: Admin Sekolah */}
             <div className="group bg-slate-50 rounded-2xl overflow-hidden border border-slate-200 hover:shadow-xl transition-all duration-300 flex flex-col">
               <div className="h-48 bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center p-8">
-                 <LayoutDashboard className="w-20 h-20 text-white opacity-90 group-hover:scale-110 transition-transform duration-300" />
+                <LayoutDashboard className="w-20 h-20 text-white opacity-90 group-hover:scale-110 transition-transform duration-300" />
               </div>
               <div className="p-6 flex-1 flex flex-col">
                 <h3 className="text-xl font-bold text-slate-900 mb-2">Admin Sekolah</h3>
                 <p className="text-slate-600 text-sm mb-6 flex-1">
                   Dashboard guru untuk manajemen kelas, absensi harian, input nilai, dan jurnal mengajar.
                 </p>
-                <button 
+                <button
                   onClick={() => onNavigate('school-admin')}
                   className="w-full mt-auto bg-white border-2 border-slate-200 text-slate-700 hover:border-blue-600 hover:text-blue-600 font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all"
                 >
@@ -145,14 +139,14 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
             {/* Card 2: Pondok Monitoring */}
             <div className="group bg-slate-50 rounded-2xl overflow-hidden border border-slate-200 hover:shadow-xl transition-all duration-300 flex flex-col">
               <div className="h-48 bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center p-8">
-                 <ShieldCheck className="w-20 h-20 text-white opacity-90 group-hover:scale-110 transition-transform duration-300" />
+                <ShieldCheck className="w-20 h-20 text-white opacity-90 group-hover:scale-110 transition-transform duration-300" />
               </div>
               <div className="p-6 flex-1 flex flex-col">
                 <h3 className="text-xl font-bold text-slate-900 mb-2">Monitoring Pondok</h3>
                 <p className="text-slate-600 text-sm mb-6 flex-1">
                   Sistem pengawasan santri (musyrif) untuk mencatat pelanggaran, perizinan, dan laporan kesehatan.
                 </p>
-                <button 
+                <button
                   onClick={() => onNavigate('pondok-monitoring')}
                   className="w-full mt-auto bg-white border-2 border-slate-200 text-slate-700 hover:border-indigo-600 hover:text-indigo-600 font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all"
                 >
@@ -164,14 +158,14 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
             {/* Card 3: Tahfidz App */}
             <div className="group bg-slate-50 rounded-2xl overflow-hidden border border-slate-200 hover:shadow-xl transition-all duration-300 flex flex-col">
               <div className="h-48 bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center p-8">
-                 <BookOpen className="w-20 h-20 text-white opacity-90 group-hover:scale-110 transition-transform duration-300" />
+                <BookOpen className="w-20 h-20 text-white opacity-90 group-hover:scale-110 transition-transform duration-300" />
               </div>
               <div className="p-6 flex-1 flex flex-col">
                 <h3 className="text-xl font-bold text-slate-900 mb-2">Aplikasi Tahfidz</h3>
                 <p className="text-slate-600 text-sm mb-6 flex-1">
                   Pencatatan setoran hafalan Quran, mutabaah harian, dan grafik perkembangan hafalan santri.
                 </p>
-                <button 
+                <button
                   onClick={() => onNavigate('tahfidz-app')}
                   className="w-full mt-auto bg-white border-2 border-slate-200 text-slate-700 hover:border-emerald-600 hover:text-emerald-600 font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all"
                 >
@@ -191,9 +185,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
           <p className="mb-8 max-w-2xl mx-auto">
             Jangan ragu untuk berdiskusi mengenai kebutuhan lembaga pendidikan Anda. Sistem kami fleksibel dan siap dikembangkan lebih lanjut.
           </p>
-          <a 
-             href="https://wa.me/6281318446604"
-             className="inline-flex items-center justify-center px-8 py-3 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition-colors gap-2"
+          <a
+            href="https://wa.me/6281318446604"
+            className="inline-flex items-center justify-center px-8 py-3 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition-colors gap-2"
           >
             <MessageCircle className="w-5 h-5" />
             Hubungi Saya (Miqdad)
