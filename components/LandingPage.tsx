@@ -194,6 +194,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
           </a>
           <p className="mt-8 text-sm text-slate-500">
             © {new Date().getFullYear()} School & Pesantren Management Systems.
+            <br />
+            <span className="text-[10px] opacity-50">
+              <a href="https://www.flaticon.com/free-icons/school" title="school icons" className="hover:text-white">School icons created by Freepik - Flaticon</a>
+            </span>
           </p>
         </div>
       </footer>
