@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PONDOK PAY - Simulasi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="Mid-client-pJM76xs7ekzQZAq1"></script>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style>
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .overlay {
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen font-sans pb-24">
+
+    <!-- === OVERLAY LOGIN === -->
+    <div id="login-overlay" class="fixed inset-0 z-[100] flex items-center justify-center p-4 overlay">
+        <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-sm">
+            <div class="text-center mb-6">
+                <div
+                    class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-[10px] font-black inline-block mb-4 border border-red-200">
+                    ⚠ MODE SIMULASI
+                </div>
+                <div
+                    class="bg-blue-600 text-white w-20 h-20 rounded-2xl flex items-center justify-center mx-auto text-3xl mb-4 shadow-lg">
+                    <i class="fas fa-wallet"></i>
+                </div>
+                <h1 class="text-2xl font-black text-gray-800">PONDOK PAY</h1>
+                <p class="text-gray-400 text-xs mt-1">Gunakan Akun Terdaftar</p>
+            </div>
+
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label class="block text-[10px] font-black text-gray-400 uppercase mb-1 ml-1">Pilih Member</label>
+                    <select id="login-username"
+                        class="w-full p-4 border-2 border-gray-100 rounded-2xl bg-gray-50 focus:border-blue-500 outline-none transition text-sm"
+                        onchange="autoFillPassword()" required>
+                        <option value="">Memuat data...</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-gray-400 uppercase mb-1 ml-1">Password</label>
+                    <input type="password" id="login-pass"
+                        class="w-full p-4 border-2 border-gray-100 rounded-2xl bg-gray-50 focus:border-blue-500 outline-none transition text-sm"
+                        placeholder="••••" required>
+                </div>
+                <button type="submit"
+                    class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black hover:bg-blue-700 shadow-xl shadow-blue-100 transition-all active:scale-95">
+                    MASUK SEKARANG
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- === HEADER APP === -->
+    <header id="app-header" class="hidden bg-white border-b sticky top-0 z-50">
+        <div class="max-w-md mx-auto px-6 py-4 flex justify-between items-center">
+            <div>
+                <p id="user-display-nisn" class="text-[10px] font-black text-blue-600 uppercase tracking-widest"></p>
+                <h2 id="display-name" class="font-bold text-gray-800"></h2>
+            </div>
+            <button onclick="doLogout()"
+                class="w-10 h-10 bg-gray-100 text-gray-500 rounded-full flex items-center justify-center">
+                <i class="fas fa-power-off"></i>
+            </button>
+        </div>
+    </header>
+
+    <main id="app-content" class="hidden max-w-md mx-auto">
+
+        <!-- 1. TAB DEPOSIT -->
+        <section id="tab-deposit" class="page p-6">
+            <h3
+                class="text-xl font-black text-gray-800 mb-6 underline decoration-blue-500 decoration-4 underline-offset-8">
+                Tambah Dana</h3>
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 mb-6">
+                <div class="flex gap-2 mb-6">
+                    <button onclick="setType('DEPOSIT_SAKU')" id="btn-saku"
+                        class="flex-1 py-3 rounded-2xl border-2 border-blue-600 bg-blue-50 text-blue-600 font-bold text-xs">UANG
+                        SAKU</button>
+                    <button onclick="setType('DEPOSIT_SPP')" id="btn-spp"
+                        class="flex-1 py-3 rounded-2xl border-2 border-gray-100 text-gray-400 font-bold text-xs">BAYAR
+                        SPP</button>
+                </div>
+
+                <div id="target-siswa-area">
+                    <label class="block text-[10px] font-black text-gray-400 uppercase mb-2">Penerima</label>
+                    <select id="depo-target" class="w-full p-4 border bg-gray-50 rounded-2xl mb-4 text-sm"
+                        onchange="checkStudentBalance()">
+                        <option value="">Pilih Siswa...</option>
+                    </select>
+                    <div id="student-info"
+                        class="hidden bg-blue-50 p-4 rounded-2xl mb-4 text-xs text-blue-700 flex justify-between font-bold">
+                        <span>Saldo:</span>
+                        <span id="student-current-balance"></span>
+                    </div>
+                </div>
+
+                <div id="target-sekolah-area" class="hidden">
+                    <div class="bg-orange-50 p-4 rounded-2xl mb-4 text-xs text-orange-700 flex items-center gap-3">
+                        <i class="fas fa-university"></i>
+                        <p>Ke Kas Sekolah (0000001)</p>
+                    </div>
+                </div>
+
+                <label class="block text-[10px] font-black text-gray-400 uppercase mb-2">Nominal (Rp)</label>
+                <input type="number" id="depo-amount"
+                    class="w-full p-4 border-2 border-gray-50 bg-gray-50 rounded-2xl font-black mb-4 text-lg focus:border-blue-500 outline-none"
+                    placeholder="0">
+                <button onclick="processDeposit()"
+                    class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black shadow-lg shadow-blue-100 active:scale-95 transition">
+                    LANJUTKAN
+                </button>
+            </div>
+        </section>
+
+        <!-- 2. TAB RIWAYAT -->
+        <section id="tab-history" class="page p-6">
+            <div class="bg-gradient-to-br from-blue-600 to-blue-800 p-6 rounded-3xl shadow-xl text-white mb-8">
+                <p class="text-[10px] font-black uppercase opacity-60 mb-1">Saldo Anda</p>
+                <h1 id="personal-balance" class="text-3xl font-black">Rp 0</h1>
+            </div>
+
+            <h3 class="text-xl font-black text-gray-800 mb-6">Aktivitas</h3>
+            <div id="history-list" class="space-y-4"></div>
+        </section>
+
+        <!-- 3. TAB INTERNAL (KASIR) -->
+        <section id="tab-internal" class="page p-6">
+            <h3
+                class="text-xl font-black text-gray-800 mb-6 underline decoration-blue-500 decoration-4 underline-offset-8">
+                Kasir & Setoran</h3>
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 mb-6">
+                <div class="flex gap-2 mb-6">
+                    <button onclick="setInternalMode('SCAN')" id="btn-scan"
+                        class="flex-1 py-3 rounded-2xl border-2 border-blue-600 bg-blue-50 text-blue-600 font-bold text-xs">BAYAR
+                        JAJAN</button>
+                    <button onclick="setInternalMode('WDW')" id="btn-wdw"
+                        class="flex-1 py-3 rounded-2xl border-2 border-gray-100 text-gray-400 font-bold text-xs">SETORAN</button>
+                </div>
+
+                <div id="scan-mode-area">
+                    <div id="reader"
+                        class="rounded-2xl overflow-hidden mb-4 bg-gray-100 border-2 border-dashed border-gray-300">
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="startScanner()"
+                            class="bg-blue-600 text-white px-4 py-2 rounded-xl text-[10px] font-black">BUKA
+                            KAMERA</button>
+                        <button onclick="stopScanner()"
+                            class="bg-gray-200 text-gray-600 px-4 py-2 rounded-xl text-[10px] font-black">MATIKAN</button>
+                    </div>
+
+                    <!-- Area Dummy Barcode -->
+                    <div class="mt-4 p-4 border-2 border-gray-100 bg-white rounded-2xl flex flex-col items-center justify-center relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-blue-500"></div>
+                        <p class="text-[9px] font-black text-gray-400 mb-3 uppercase tracking-widest">Simulasi Barcode Terbaca</p>
+
+                        <!-- SVG Barcode Generator Dummy -->
+                        <svg class="h-12 w-full max-w-[200px] mb-2 opacity-80" preserveAspectRatio="none" viewBox="0 0 100 30" fill="#1f2937" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="0" y="0" width="3" height="30"/>
+                            <rect x="5" y="0" width="1" height="30"/>
+                            <rect x="8" y="0" width="4" height="30"/>
+                            <rect x="14" y="0" width="2" height="30"/>
+                            <rect x="18" y="0" width="1" height="30"/>
+                            <rect x="22" y="0" width="5" height="30"/>
+                            <rect x="29" y="0" width="2" height="30"/>
+                            <rect x="33" y="0" width="4" height="30"/>
+                            <rect x="39" y="0" width="1" height="30"/>
+                            <rect x="42" y="0" width="3" height="30"/>
+                            <rect x="47" y="0" width="2" height="30"/>
+                            <rect x="51" y="0" width="4" height="30"/>
+                            <rect x="57" y="0" width="1" height="30"/>
+                            <rect x="61" y="0" width="3" height="30"/>
+                            <rect x="66" y="0" width="2" height="30"/>
+                            <rect x="70" y="0" width="1" height="30"/>
+                            <rect x="73" y="0" width="5" height="30"/>
+                            <rect x="80" y="0" width="2" height="30"/>
+                            <rect x="84" y="0" width="1" height="30"/>
+                            <rect x="87" y="0" width="4" height="30"/>
+                            <rect x="93" y="0" width="2" height="30"/>
+                            <rect x="97" y="0" width="3" height="30"/>
+                        </svg>
+
+                        <input type="text" id="barcode-input" value="0000003BC"
+                            class="w-full p-2 border-none bg-gray-50 rounded-xl font-black text-center text-sm focus:ring-2 focus:ring-blue-100 outline-none transition"
+                            placeholder="ID Barcode Siswa...">
+                    </div>
+                </div>
+
+                <div id="wdw-mode-area" class="hidden">
+                    <div class="bg-gray-50 p-4 rounded-2xl border-2 border-gray-100 mb-6">
+                        <p class="text-[10px] font-bold text-gray-400">DARI: KANTIN (0000002)</p>
+                        <p class="text-[10px] font-bold text-gray-400">KE: SEKOLAH (0000001)</p>
+                    </div>
+                </div>
+
+                <label class="block text-[10px] font-black text-gray-400 uppercase mb-2">Nominal (Rp)</label>
+                <input type="number" id="internal-amount"
+                    class="w-full p-4 border-2 border-gray-50 bg-gray-50 rounded-2xl font-black mb-6 text-lg focus:border-blue-500 outline-none"
+                    placeholder="0">
+                <button onclick="processInternalTrx()"
+                    class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black shadow-lg active:scale-95 transition">
+                    KONFIRMASI
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <nav id="bottom-nav"
+        class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-sm bg-gray-900/90 backdrop-blur-md text-white rounded-3xl shadow-2xl flex justify-around p-2 z-50">
+        <button onclick="switchTab('tab-deposit')" class="nav-btn p-3 flex flex-col items-center gap-1 opacity-30">
+            <i class="fas fa-plus-circle text-xl"></i>
+            <span class="text-[8px] font-black uppercase">Tambah</span>
+        </button>
+        <button onclick="switchTab('tab-history')" class="nav-btn p-3 flex flex-col items-center gap-1 opacity-30">
+            <i class="fas fa-list text-xl"></i>
+            <span class="text-[8px] font-black uppercase">Riwayat</span>
+        </button>
+        <button onclick="switchTab('tab-internal')" class="nav-btn p-3 flex flex-col items-center gap-1 opacity-30">
+            <i class="fas fa-qrcode text-xl"></i>
+            <span class="text-[8px] font-black uppercase">Scan</span>
+        </button>
+    </nav>
+
+    <script>
+        // --- LOCAL STORAGE DATABASE MOCK ---
+        function getDB() {
+            if (!localStorage.getItem('sim_db_students')) {
+                const students = [
+                    { nisn: '0000001', nama: 'Sekolah', barcode: '0000001BC', password: '1234' },
+                    { nisn: '0000002', nama: 'Kantin', barcode: '0000002BC', password: '1234' },
+                    { nisn: '0000003', nama: 'Siswa 1', barcode: '0000003BC', password: '1234' }
+                ];
+                const wallets = { '0000001': 0, '0000002': 0, '0000003': 0 };
+                const transactions = [];
+
+                localStorage.setItem('sim_db_students', JSON.stringify(students));
+                localStorage.setItem('sim_db_wallets', JSON.stringify(wallets));
+                localStorage.setItem('sim_db_trans', JSON.stringify(transactions));
+            }
+            return {
+                students: JSON.parse(localStorage.getItem('sim_db_students')),
+                wallets: JSON.parse(localStorage.getItem('sim_db_wallets')),
+                transactions: JSON.parse(localStorage.getItem('sim_db_trans'))
+            };
+        }
+
+        function saveDB(db) {
+            localStorage.setItem('sim_db_students', JSON.stringify(db.students));
+            localStorage.setItem('sim_db_wallets', JSON.stringify(db.wallets));
+            localStorage.setItem('sim_db_trans', JSON.stringify(db.transactions));
+        }
+
+        function getFormattedDate() {
+            const d = new Date();
+            return d.getFullYear() + "-" +
+                String(d.getMonth() + 1).padStart(2, '0') + "-" +
+                String(d.getDate()).padStart(2, '0') + " " +
+                String(d.getHours()).padStart(2, '0') + ":" +
+                String(d.getMinutes()).padStart(2, '0') + ":" +
+                String(d.getSeconds()).padStart(2, '0');
+        }
+
+        // --- APP LOGIC ---
+        let currentUser = null;
+        let currentDepoType = 'DEPOSIT_SAKU';
+        let currentInternalMode = 'SCAN';
+        let html5QrCode = null;
+
+        async function init() {
+            try {
+                const db = getDB();
+
+                const userSelect = document.getElementById('login-username');
+                userSelect.innerHTML = '<option value="">Pilih Sesuai Identitas...</option>';
+                db.students.forEach(s => userSelect.innerHTML += `<option value="${s.nisn}">${s.nama} (${s.nisn})</option>`);
+
+                const depoTarget = document.getElementById('depo-target');
+                depoTarget.innerHTML = '<option value="">Pilih Siswa...</option>';
+                db.students.forEach(s => depoTarget.innerHTML += `<option value="${s.nisn}">${s.nama}</option>`);
+
+                const saved = localStorage.getItem('pondok_user_v3');
+                if (saved) { currentUser = JSON.parse(saved); launch(); }
+            } catch (e) {
+                console.error("Initialization Error", e);
+            }
+        }
+        init();
+
+        function autoFillPassword() {
+            const val = document.getElementById('login-username').value;
+            if (val) document.getElementById('login-pass').value = '1234';
+            else document.getElementById('login-pass').value = '';
+        }
+
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-pass').value;
+
+            const db = getDB();
+            const user = db.students.find(s => s.nisn === username && s.password === password);
+
+            if (!user) return alert("Login Gagal! Username atau Password Salah");
+
+            currentUser = user;
+            localStorage.setItem('pondok_user_v3', JSON.stringify(currentUser));
+            launch();
+        });
+
+        function launch() {
+            document.getElementById('login-overlay').classList.add('hidden');
+            document.getElementById('app-header').classList.remove('hidden');
+            document.getElementById('app-content').classList.remove('hidden');
+            document.getElementById('bottom-nav').classList.remove('hidden');
+            document.getElementById('display-name').innerText = currentUser.nama;
+            document.getElementById('user-display-nisn').innerText = "Member ID: " + currentUser.nisn;
+            switchTab('tab-history');
+        }
+
+        function switchTab(t) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(t).classList.add('active');
+            const btns = document.querySelectorAll('.nav-btn');
+            btns.forEach(b => b.classList.add('opacity-30'));
+            if (t === 'tab-deposit') btns[0].classList.remove('opacity-30');
+            if (t === 'tab-history') { btns[1].classList.remove('opacity-30'); loadHistory(); }
+            if (t === 'tab-internal') btns[2].classList.remove('opacity-30');
+            if (t !== 'tab-internal') stopScanner();
+        }
+
+        async function loadHistory() {
+            const db = getDB();
+            const userId = currentUser.nisn;
+
+            const personalBalance = db.wallets[userId] || 0;
+            document.getElementById('personal-balance').innerText = formatRupiah(personalBalance);
+
+            let history = db.transactions.filter(trx =>
+                trx.user_id === userId || trx.from_account === userId || trx.to_account === userId
+            );
+
+            // Urutkan dari yang terbaru dan ambil 50
+            history.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+            history = history.slice(0, 50);
+
+            const list = document.getElementById('history-list');
+            list.innerHTML = history.length ? '' : '<div class="text-center py-20 text-gray-300 font-bold italic">Belum ada transaksi</div>';
+
+            // Helper untuk mengambil Nama berdasarkan NISN
+            const getName = (id) => {
+                if (id === 'EXTERNAL') return 'Sistem / Bank';
+                const student = db.students.find(s => s.nisn === id);
+                return student ? `${student.nama} (${student.nisn})` : id;
+            };
+
+            history.forEach(trx => {
+                const color = trx.type.includes('DEPOSIT') ? 'text-green-600' : 'text-red-500';
+
+                list.innerHTML += `
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-50 flex justify-between items-center">
+                        <div>
+                            <p class="text-[10px] font-black uppercase opacity-30">${trx.type.replace('_', ' ')}</p>
+                            <p class="font-bold text-gray-800 text-xs mt-1">Dari: <span class="font-medium text-gray-500">${getName(trx.from_account)}</span></p>
+                            <p class="font-bold text-gray-800 text-xs">Ke: <span class="font-medium text-gray-500">${getName(trx.to_account)}</span></p>
+                            <p class="text-[9px] text-gray-400 mt-2">${trx.created_at}</p>
+                        </div>
+                        <div class="text-right font-black ${color}">${formatRupiah(trx.amount)}</div>
+                    </div>`;
+            });
+        }
+
+        function setType(t) {
+            currentDepoType = t;
+            document.getElementById('btn-saku').className = t === 'DEPOSIT_SAKU' ? 'flex-1 py-3 rounded-2xl border-2 border-blue-600 bg-blue-50 text-blue-600 font-bold text-xs' : 'flex-1 py-3 rounded-2xl border-2 border-gray-100 text-gray-400 font-bold text-xs';
+            document.getElementById('btn-spp').className = t === 'DEPOSIT_SPP' ? 'flex-1 py-3 rounded-2xl border-2 border-blue-600 bg-blue-50 text-blue-600 font-bold text-xs' : 'flex-1 py-3 rounded-2xl border-2 border-gray-100 text-gray-400 font-bold text-xs';
+            document.getElementById('target-siswa-area').className = t === 'DEPOSIT_SAKU' ? '' : 'hidden';
+            document.getElementById('target-sekolah-area').className = t === 'DEPOSIT_SPP' ? '' : 'hidden';
+        }
+
+        async function checkStudentBalance() {
+            const nisn = document.getElementById('depo-target').value;
+            if (!nisn) return document.getElementById('student-info').classList.add('hidden');
+
+            const db = getDB();
+            const balance = db.wallets[nisn] || 0;
+
+            document.getElementById('student-info').classList.remove('hidden');
+            document.getElementById('student-current-balance').innerText = formatRupiah(balance);
+        }
+
+        async function processDeposit() {
+            const targetId = currentDepoType === 'DEPOSIT_SPP' ? '0000001' : document.getElementById('depo-target').value;
+            const amountStr = document.getElementById('depo-amount').value;
+            const amount = parseInt(amountStr);
+
+            if (!targetId || !amountStr || amount < 1000) return alert("Nominal min Rp 1.000");
+
+            const isConfirmed = confirm(`[SIMULASI PAYMENT GATEWAY]\n\nAnda akan memproses pembayaran sebesar ${formatRupiah(amount)}.\nLanjutkan simulasi?`);
+            if (!isConfirmed) return;
+
+            // --- SIMULASI PAYMENT GATEWAY (DELAY 5 DETIK) ---
+            const btn = document.querySelector('button[onclick="processDeposit()"]');
+            const originalText = btn.innerText;
+
+            // Ubah tampilan tombol menjadi loading
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> MENGHUBUNGKAN GATEWAY...`;
+            btn.disabled = true;
+            btn.classList.add('opacity-70', 'cursor-not-allowed');
+
+            let countdown = 5;
+            const timer = setInterval(() => {
+                countdown--;
+                if(countdown > 0) {
+                    btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> MENUNGGU PEMBAYARAN... (${countdown}s)`;
+                }
+            }, 1000);
+
+            // Eksekusi setelah 5 detik
+            setTimeout(() => {
+                clearInterval(timer);
+
+                // 1. Ambil database dari local storage
+                const db = getDB();
+                const orderId = `${currentDepoType}-${Date.now()}-${targetId}`;
+
+                // 2. Tambah saldo target
+                if (db.wallets[targetId] !== undefined) {
+                    db.wallets[targetId] += amount;
+                }
+
+                // 3. Catat transaksi ke riwayat
+                db.transactions.push({
+                    id: orderId,
+                    user_id: currentUser.nisn,
+                    from_account: 'EXTERNAL',
+                    to_account: targetId,
+                    type: currentDepoType,
+                    amount: amount,
+                    note: 'Topup Gateway (Simulasi 5 Detik)',
+                    status: 'success',
+                    created_at: getFormattedDate()
+                });
+
+                // 4. Simpan kembali ke local storage
+                saveDB(db);
+
+                // 5. Kembalikan tombol ke kondisi semula
+                btn.innerText = originalText;
+                btn.disabled = false;
+                btn.classList.remove('opacity-70', 'cursor-not-allowed');
+
+                // 6. Beri notifikasi dan alihkan ke riwayat
+                alert("✅ Pembayaran Gateway Sukses! Saldo telah masuk.");
+                document.getElementById('depo-amount').value = '';
+                switchTab('tab-history');
+
+            }, 5000); // 5000 milidetik = 5 detik
+        }
+
+        function setInternalMode(m) {
+            currentInternalMode = m;
+            document.getElementById('btn-scan').className = m === 'SCAN' ? 'flex-1 py-3 rounded-2xl border-2 border-blue-600 bg-blue-50 text-blue-600 font-bold text-xs' : 'flex-1 py-3 rounded-2xl border-2 border-gray-100 text-gray-400 font-bold text-xs';
+            document.getElementById('btn-wdw').className = m === 'WDW' ? 'flex-1 py-3 rounded-2xl border-2 border-blue-600 bg-blue-50 text-blue-600 font-bold text-xs' : 'flex-1 py-3 rounded-2xl border-2 border-gray-100 text-gray-400 font-bold text-xs';
+            document.getElementById('scan-mode-area').className = m === 'SCAN' ? '' : 'hidden';
+            document.getElementById('wdw-mode-area').className = m === 'WDW' ? '' : 'hidden';
+        }
+
+        function startScanner() {
+            if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
+            const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+            html5QrCode.start({ facingMode: "environment" }, config, (decodedText) => {
+                document.getElementById('barcode-input').value = decodedText;
+                stopScanner();
+                alert("Barcode Terbaca: " + decodedText);
+            }).catch(() => alert("Kamera Error. Beri izin akses."));
+        }
+
+        function stopScanner() {
+            if (html5QrCode && html5QrCode.isScanning) {
+                html5QrCode.stop().then(() => html5QrCode.clear());
+            }
+        }
+
+        async function processInternalTrx() {
+            const barcode = document.getElementById('barcode-input').value;
+            const amountStr = document.getElementById('internal-amount').value;
+            const amount = parseInt(amountStr);
+            const type = currentInternalMode === 'SCAN' ? 'PAY_KANTIN' : 'WITHDRAW_KANTIN';
+
+            if (!amountStr || isNaN(amount)) return alert("Masukkan nominal yang valid");
+
+            const db = getDB();
+
+            if (type === 'PAY_KANTIN') {
+                const student = db.students.find(s => s.barcode === barcode);
+                if (!student) return alert("Barcode tidak dikenal!");
+
+                const studentBalance = db.wallets[student.nisn] || 0;
+                if (studentBalance < amount) return alert("Saldo siswa tidak cukup!");
+
+                db.wallets[student.nisn] -= amount;
+                db.wallets['0000002'] += amount;
+
+                db.transactions.push({
+                    id: `PAY-${Date.now()}`,
+                    user_id: currentUser.nisn,
+                    from_account: student.nisn,
+                    to_account: '0000002',
+                    type: 'PAY_KANTIN',
+                    amount: amount,
+                    note: 'Trx Internal',
+                    status: 'success',
+                    created_at: getFormattedDate()
+                });
+
+            } else if (type === 'WITHDRAW_KANTIN') {
+                const kantinBalance = db.wallets['0000002'] || 0;
+                if (kantinBalance < amount) return alert("Saldo Kantin tidak cukup!");
+
+                db.wallets['0000002'] -= amount;
+                db.wallets['0000001'] += amount;
+
+                db.transactions.push({
+                    id: `WDW-${Date.now()}`,
+                    user_id: currentUser.nisn,
+                    from_account: '0000002',
+                    to_account: '0000001',
+                    type: 'WITHDRAW_KANTIN',
+                    amount: amount,
+                    note: 'Trx Internal',
+                    status: 'success',
+                    created_at: getFormattedDate()
+                });
+            }
+
+            saveDB(db);
+            alert("Berhasil!");
+
+            document.getElementById('internal-amount').value = '';
+            document.getElementById('barcode-input').value = '';
+            switchTab('tab-history');
+        }
+
+        function doLogout() { localStorage.removeItem('pondok_user_v3'); location.reload(); }
+        function formatRupiah(x) { return "Rp " + x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
+    </script>
+</body>
+
+</html>

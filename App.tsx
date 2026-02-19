@@ -4,6 +4,7 @@ import LandingPage from './components/LandingPage';
 import SchoolAdminSimulation from './components/simulations/SchoolAdmin';
 import PondokMonitoringSimulation from './components/simulations/PondokMonitoring';
 import TahfidzAppSimulation from './components/simulations/TahfidzApp';
+import PondokPaySimulation from './components/simulations/PondokPay';
 import FloatingWhatsApp from './components/FloatingWhatsApp';
 
 const App: React.FC = () => {
@@ -17,6 +18,8 @@ const App: React.FC = () => {
         return <PondokMonitoringSimulation onBack={() => setCurrentView('landing')} />;
       case 'tahfidz-app':
         return <TahfidzAppSimulation onBack={() => setCurrentView('landing')} />;
+      case 'pondok-pay':
+        return <PondokPaySimulation onBack={() => setCurrentView('landing')} />;
       case 'landing':
       default:
         return <LandingPage onNavigate={setCurrentView} />;

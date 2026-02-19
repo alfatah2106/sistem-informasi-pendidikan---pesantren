@@ -9,7 +9,8 @@ import {
   ShieldCheck,
   ChevronRight,
   MonitorPlay,
-  MessageCircle
+  MessageCircle,
+  Wallet
 } from 'lucide-react';
 
 interface LandingPageProps {
@@ -115,7 +116,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
 
             {/* Card 1: Admin Sekolah */}
             <div className="group bg-slate-50 rounded-2xl overflow-hidden border border-slate-200 hover:shadow-xl transition-all duration-300 flex flex-col">
@@ -168,6 +169,25 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
                 <button
                   onClick={() => onNavigate('tahfidz-app')}
                   className="w-full mt-auto bg-white border-2 border-slate-200 text-slate-700 hover:border-emerald-600 hover:text-emerald-600 font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all"
+                >
+                  <MonitorPlay className="w-4 h-4" /> Buka Simulasi
+                </button>
+              </div>
+            </div>
+
+            {/* Card 4: Pondok Pay */}
+            <div className="group bg-slate-50 rounded-2xl overflow-hidden border border-slate-200 hover:shadow-xl transition-all duration-300 flex flex-col">
+              <div className="h-48 bg-gradient-to-br from-yellow-500 to-orange-600 flex items-center justify-center p-8">
+                <Wallet className="w-20 h-20 text-white opacity-90 group-hover:scale-110 transition-transform duration-300" />
+              </div>
+              <div className="p-6 flex-1 flex flex-col">
+                <h3 className="text-xl font-bold text-slate-900 mb-2">Pondok Pay</h3>
+                <p className="text-slate-600 text-sm mb-6 flex-1">
+                  Sistem pembayaran digital cerdas (E-Money) untuk bayar SPP, jajan kantin, dan top up uang saku.
+                </p>
+                <button
+                  onClick={() => onNavigate('pondok-pay')}
+                  className="w-full mt-auto bg-white border-2 border-slate-200 text-slate-700 hover:border-orange-600 hover:text-orange-600 font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all"
                 >
                   <MonitorPlay className="w-4 h-4" /> Buka Simulasi
                 </button>
